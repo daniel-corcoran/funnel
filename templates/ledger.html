@@ -1,0 +1,48 @@
+{% block ledger %}
+<h1>Ledger</h1>
+    <h3>The ledger preserves and displays the most highly voted thought from users each day. </h3>
+
+    <style>
+    #ledger_table {
+        width: 75%;
+        margin: auto;
+    }
+    #ledger_text {
+        width: 75%;
+    }
+    #ledger_table button {
+        border-radius: 5px;
+        font-size: 20px;
+        color: black;
+        margin-top: 2px;
+        border: solid #42434b;
+    }
+    </style>
+    <span id="ledger_content"></span>
+
+    <script>
+
+$(function() {
+        $('#toggle').bind('click', function() {
+
+            $.getJSON('/_ledger_endpoint', {
+
+
+          }, function(data) {
+                // At this point we load a new set of questions and re-show all UI elements
+
+
+
+                document.getElementById("ledger_content").innerHTML = data.html;
+
+
+          });
+
+
+        })
+
+        });
+
+
+    </script>
+{% endblock %}

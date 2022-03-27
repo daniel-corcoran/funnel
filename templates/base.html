@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Funnel</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<style>
+    body {
+        background-image: url('static/background.png');
+        background-size: cover;
+          font-family: Arial, sans-serif;
+
+    }
+
+    #main {
+        align-content: center;
+        width: 100%;
+        text-align: center;
+    }
+    .float {
+        padding: 20px;
+        background-color: white;
+        color: black;
+        margin: auto;
+        border-radius: 10px;
+        width: 50%;
+        margin-top: 2%;
+    }
+    .bottom-menu-button {
+        width: 150px;
+        height: 40px;
+        border-radius: 5px;
+        font-size: 20px;
+        color: black;
+        margin-top: 20px;
+        margin-left: 5px;
+        margin-right: 5px;
+        border: solid #030a40;
+    }
+
+
+</style>
+
+
+<div id="main">
+
+    <div class="float" id="instructions">
+        <h1>Welcome to Funnel.</h1>
+        <br>
+        <h2>What is this?</h2>
+        <h4>This is a tool which aims to give a single consensus voice to a crowd.</h4>
+            <br>
+        <h2>How can I participate?</h2>
+        <h4>First, vote on thoughts written by other people. </h4>
+
+        <h4>Then, contribute your own thought after voting on a few.</h4>
+
+        <h4>The most highly voted on thought of the day is saved and displayed forever.</h4>
+        <h4>All other thoughts are destroyed permanently.</h4>
+        <br>
+
+    </div>
+    <div class="float">
+
+        <div id="vote">{% include 'vote.html' %}</div>
+        <div id="ledger" style="display: none;">{% include 'ledger.html' %}</div>
+    </div>
+
+
+    <button id="toggle" class="bottom-menu-button" hidden>View Ledger</button>
+    <button id="instructions_btn" class="bottom-menu-button" hidden>Help</button>
+
+
+</div>
+
+<script>
+
+    const ledger = document.getElementById("ledger");
+    const vote = document.getElementById("vote");
+
+    const toggle_btn = document.getElementById("toggle");
+    const help_btn = document.getElementById("instructions_btn");
+
+    toggle_btn.onclick = function () {
+
+      if (ledger.style.display !== "none") {
+        ledger.style.display = "none";
+        vote.style.display = "block";
+        toggle_btn.innerText = 'View Ledger';
+
+      }
+      else {
+
+        ledger.style.display = "block";
+        vote.style.display = "none";
+        toggle_btn.innerText = 'Return';
+
+
+      }
+    };
+
+    help_btn.onclick = function() {
+
+            document.getElementById('instructions').hidden = false;
+            document.getElementById('instructions_btn').hidden = true;
+            toggle_btn.innerText = 'View Ledger';
+            toggle_btn.hidden = true;
+            ledger.style.display = "none";
+            vote.style.display = "block";
+    }
+
+</script>
+
+
+
+</body>
+</html>

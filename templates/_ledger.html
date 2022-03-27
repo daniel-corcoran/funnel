@@ -1,0 +1,16 @@
+
+<table id="ledger_table">
+    <tr>
+        <td id="ledger_text"><h4 style="margin-bottom: 5px;">Post</h4></td>
+        <td><h4 style="margin-bottom: 5px;">Timestamp</h4></td>
+    </tr>
+    {% for x in obj_list %}
+    <tr>
+        <td id="ledger_text"><button style="width: 100%">{{ x['text'] }}</button></td>
+        <td><button style="width: 100%">{{ x['timestamp'] }}</button></td>
+    </tr>
+
+
+    {% endfor %}
+
+</table>

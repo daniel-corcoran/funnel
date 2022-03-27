@@ -1,0 +1,133 @@
+{% block vote %}
+
+    <style>
+    .option-header {
+        width: 50%;
+        border: solid black 2px;
+        border-radius: 5px;
+        font-size: 20px;
+        margin: 5px;
+    }
+    #prompt_textarea {
+        width: 400px;
+        font-size: 20px;
+    }
+    </style>
+
+    <div id="button_container">
+    <h3>Please choose between these two thoughts:</h3>
+    <div id="option_1_container"><button class="option-header" id="option_1"></button></div>
+    <div id="option_2_container"><button class="option-header" id="option_2"></button></div></div>
+    <div id="prompt" hidden>
+        <h3>What's on your mind?</h3>
+        <textarea id="prompt_textarea" maxlength="128"></textarea><br>
+    <button id="submit_prompt" class="bottom-menu-button">Post Thought</button>
+    </div>
+
+
+<script>
+// Fetches first round of vote options.
+// It will be updated in a different funciton when the user makes a vote.
+var internalCounter = 3; // This needs to change eventually
+
+$(function() {
+    $(document).ready(function(){
+      $.getJSON('/_options_endpoint', {
+
+      }, function(data) {
+
+        $("#option_1").text(data.option_1_text);
+       document.getElementById('option_1').name = data.option_1_id;
+
+        $("#option_2").text(data.option_2_text);
+        document.getElementById('option_2').name= data.option_2_id;
+
+
+      });
+      return false;
+    });
+  });
+
+
+// This one submits the vote and gets another page as a result
+$(function() {
+    $('#option_1,#option_2').bind('click', function() {
+
+
+
+        console.log(this.id);
+        document.getElementById('instructions').hidden = true;
+            document.getElementById('instructions_btn').hidden = false;
+
+        document.getElementById('toggle').hidden = false;
+
+        if(this.id == 'option_1'){
+            var win = document.getElementById('option_1').name;
+            var lose = document.getElementById('option_2').name;
+
+
+        }else{
+            var win = document.getElementById('option_2').name;
+            var lose = document.getElementById('option_1').name;
+        }
+        console.log(win);
+        console.log(lose);
+
+        $.getJSON('/_submit_endpoint', {
+        win: win,
+        lose: lose
+      }, function(data) {
+            // FIXME: At this point if we have voted on enough
+            // We can create a new thought now
+
+        $("#option_1").text(data.option_1_text);
+       document.getElementById('option_1').name = data.option_1_id;
+
+        $("#option_2").text(data.option_2_text);
+        document.getElementById('option_2').name= data.option_2_id;
+
+
+        // Now check if we can prompt the user for a thought.
+        internalCounter = internalCounter - 1;
+        console.log("Internal counter: ", internalCounter);
+        if (internalCounter == 0){
+            // Prompt for
+            internalCounter = 3;
+
+            document.getElementById("prompt").hidden = false;
+            document.getElementById("button_container").hidden = true;
+
+        }
+
+
+
+      });
+      return false;
+    });
+  });
+
+$(function() {
+    $('#submit_prompt').bind('click', function() {
+        $.getJSON('/_post_endpoint', {
+            post: document.getElementById('prompt_textarea').value
+
+
+      }, function(data) {
+            // At this point we load a new set of questions and re-show all UI elements
+
+
+
+            document.getElementById("prompt").hidden = true;
+            document.getElementById("button_container").hidden = false;
+            document.getElementById('prompt_textarea').value = '';
+
+      });
+
+
+    })
+
+    });
+</script>
+
+
+{% endblock %}
