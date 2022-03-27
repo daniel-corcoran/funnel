@@ -8,6 +8,10 @@ from flask import request
 import random
 import json
 from elosports.elo import Elo
+import datetime
+
+server_lock = False # Server access mutex?
+
 
 
 def timer_thread():
@@ -17,9 +21,19 @@ def timer_thread():
     # c) save timer to a global variable which is accessible by javascript and displays on the frontend
     ...
 
+@app.route('/_timer')
 def _timer():
-    # Returns timer to frontend
-    ...
+
+    n = datetime.datetime.now()
+
+    # Datetime of next midnight
+    m = datetime.datetime(n.year, n.month, n.day + 1, 0, 0, 0)
+
+    time_left = m - n
+    hrs_left = str(time_left).split(' ')[1]
+    return json.dumps({'time': hrs_left})
+
+
 
 def calculate_new_scores(winner_score = 0, loser_score = 0):
     # Return results of elo calculation
@@ -101,7 +115,73 @@ def _options_endpoint():
 
 @app.route('/')
 def index():
-    return render_template('base.html')
+    server_thread()
+
+    n = datetime.datetime.now()
+
+    # Datetime of next midnight
+    m = datetime.datetime(n.year, n.month, n.day + 1, 0, 0, 0)
+
+    time_left =  m - n
+
+    seconds = time_left.seconds
+    hours =  seconds // 3600
+    minutes = (seconds % 3600) // 60
+    seconds = seconds % 60
+
+    return render_template('base.html',
+                           timer_hours = hours,
+                           timer_minutes = minutes,
+                           timer_seconds = seconds)
+
+
+def server_thread():
+
+    # Mantains the global server time variable.
+    # Performs system update at midnight ETC
+    # Wipes day's database, plants 2 options, and saves highest ELO to ledger.
+    # There's a lot to do here.
+
+    # FOR TESTING: Have on a 5 minute timer
+
+    #while True: # Always running
+    #    t = datetime.datetime.now()
+
+    #     if t.hour == 0 and t.minute == 0 and t.second == 0:
+
+    thoughts = database.get_thoughts()
+    new = {}
+    l_elo = []
+    for t in thoughts:
+        new[t['elo']] = t
+        l_elo.append(t['elo'])
+    m = new[max(l_elo)] # This is the most popular post of the day
+
+    database.add_ledger(m)
+
+    # Now that this is done, we purge the thoughts table and
+    # Insert two "dummy" thoughts that maybe will spur some discussion.
+
+
+
+
+
+
+
+            # Sort database by elo now
+
+
+            # Find hgihest elo in database
+            # Save to ledger
+            # Wipe day's db
+            # Plant 2 new options in the db
+
+        #else:
+        #    sleep(1)
+
+
+
+
 
 
 if __name__ == '__main__':

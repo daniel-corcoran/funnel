@@ -76,3 +76,19 @@ def add_prompt(prompt):
     con.commit()
     con.close()
 
+def add_ledger(post):
+    # This function adds a post to the ledger
+    # Write to database
+    # Add a prompt
+
+
+
+    con = sqlite3.connect('database')
+    cur = con.cursor()
+    cur.execute(f'''INSERT INTO thoughts
+    (id, text, timestamp, upvotes, downvotes, elo)
+    VALUES
+    ({post['id']}, '{post['text']}', '{post['timestamp']}', {post['upvotes']}, {post['downvotes']}, {post['elo']})
+    ''')
+    con.commit()
+    con.close()
